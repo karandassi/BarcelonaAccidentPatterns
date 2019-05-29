@@ -1,0 +1,512 @@
+filter(n>1)
+babynames
+babynames %>%
+count(name, year, prop) %>%
+filter(n>1)
+babynames
+babynames %>%
+count(name, year,n, prop) %>%
+filter(n>1)
+babynames %>%
+count(name, year,sex) %>%
+filter(n>1)
+data("flights")
+flights
+names(flights)
+names(planes)
+flights %>%
+count(tailnum) %>%
+filter(n>1)
+planes %>%
+count(tailnum) %>%
+filter(n>1)
+names(flights)
+names(flights)
+inner_join(planes,flights, key = "tailnum")
+inner_join(flights, planes key = "tailnum")
+inner_join(flights, planes, key = "tailnum")
+inner_join(flights, planes, by = "tailnum")
+airlines
+flights
+names(flights)
+names(airlines)
+full_join(flights, airlines, by = "carrier")
+left_join(flights, airlines, by = "carrier")
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+read_csv("cd ..//Data// unemployment.csv")
+setwd("D:/stat_612/R Project/Code")
+read_csv("cd ..//Data// unemployment.csv")
+read_csv("..//Data// unemployment.csv")
+read_csv("..//Data//unemployment.csv")
+unemploy <- read_csv("..//Data//unemployment.csv")
+str(unemploy)
+population <- read_csv("..//Data//population.csv")
+str(population)
+names(unemploy)
+accidents <- read_csv("..//Data//accidents.csv")
+accidents <- read_csv("..//Data//accidents_2017.csv")
+str(accidents)
+str(unemploy)
+unique(unemploy$`District Name`)
+str(unemploy)
+unique(unemploy$Demand_occupation)
+unique(unemploy$`Neighborhood Name`)
+library(ggplot2)
+unemploy %>%
+group_by(Demand_occupation)
+unemploy %>%
+group_by(Demand_occupation) %>%
+count()
+unemploy %>%
+group_by(Demand_occupation) %>%
+count()
+unemploy %>%
+group_by(`District Name`, Demand_occupation) %>%
+count()
+unemploy %>%
+group_by(`District Name`, Demand_occupation) %>%
+count(sort = TRUE)
+unemploy %>%
+group_by(`District Name`, Demand_occupation) %>%
+count(sort = TRUE) %>%
+ggplot(mapping = aes(x = `District Name`, y = n, color = Demand_occupation)) +
+geom_bar() +
+xlab("District Name") %>%
+ylab("Number") %>%
+theme_bw()
+unemploy %>%
+group_by(`District Name`, Demand_occupation) %>%
+count(sort = TRUE) %>%
+ggplot(mapping = aes(x = `District Name`, y = n, color = Demand_occupation)) +
+geom_bar() +
+xlab("District Name") +
+ylab("Number") +
+theme_bw()
+unemploy %>%
+group_by(`District Name`, Demand_occupation) %>%
+count(sort = TRUE) %>%
+ggplot(mapping = aes(x = `District Name`, y = n, color = Demand_occupation)) +
+geom_point() +
+xlab("District Name") +
+ylab("Number") +
+theme_bw()
+unemploy %>%
+group_by(`District Name`, Demand_occupation) %>%
+count(sort = TRUE) %>%
+ggplot(mapping = aes(x = `District Name`, y = n, color = Demand_occupation)) +
+geom_col() +
+xlab("District Name") +
+ylab("Number") +
+theme_bw()
+unemploy %>%
+group_by(`District Name`, Demand_occupation) %>%
+count(sort = TRUE) %>%
+ggplot(mapping = aes(x = `District Name`, y = n, type = Demand_occupation)) +
+geom_col() +
+xlab("District Name") +
+ylab("Number") +
+theme_bw()
+unemploy %>%
+group_by(`District Name`, Demand_occupation) %>%
+count(sort = TRUE) %>%
+ggplot(mapping = aes(x = `District Name`, y = n, color = Demand_occupation)) +
+geom_col(color = Demand_occupation) +
+xlab("District Name") +
+ylab("Number") +
+theme_bw()
+unemploy %>%
+group_by(`District Name`, Demand_occupation) %>%
+count(sort = TRUE) %>%
+ggplot(mapping = aes(x = `District Name`, y = n)) +
+geom_col(color = Demand_occupation) +
+xlab("District Name") +
+ylab("Number") +
+theme_bw()
+unemploy %>%
+group_by(`District Name`, Demand_occupation) %>%
+count(sort = TRUE) %>%
+ggplot(mapping = aes(x = `District Name`, y = n, color = Demand_occupation)) +
+geom_col() +
+xlab("District Name") +
+ylab("Number") +
+theme_bw()
+unemploy %>%
+group_by(`District Name`, Demand_occupation) %>%
+count(sort = TRUE) %>%
+ggplot(mapping = aes(x = `District Name`, y = n, fill = Demand_occupation)) +
+geom_col() +
+xlab("District Name") +
+ylab("Number") +
+theme_bw()
+unemploy %>%
+group_by(`District Name`, Demand_occupation) %>%
+count(sort = TRUE) %>%
+ggplot(mapping = aes(x = `District Name`, y = n, fill = Demand_occupation)) +
+geom_col() +
+xlab("District Name") +
+ylab("Number") +
+theme_bw() +
+labs(color = "Unemployment Type")
+unemploy %>%
+group_by(`District Name`, Demand_occupation) %>%
+count(sort = TRUE) %>%
+ggplot(mapping = aes(x = `District Name`, y = n, fill = Demand_occupation)) +
+geom_col() +
+xlab("District Name") +
+ylab("Number") +
+theme_bw() +
+labs(color = "Type")
+unemploy %>%
+group_by(`District Name`, Demand_occupation) %>%
+count(sort = TRUE) %>%
+ggplot(mapping = aes(x = `District Name`, y = n, fill = Demand_occupation)) +
+geom_point() +
+xlab("District Name") +
+ylab("Number") +
+theme_bw() +
+labs(color = "Type")
+unemploy %>%
+group_by(`District Name`, Demand_occupation) %>%
+count(sort = TRUE) %>%
+ggplot(mapping = aes(x = `District Name`, y = n, fill = Demand_occupation)) +
+geom_col() +
+xlab("District Name") +
+ylab("Number") +
+theme_bw() +
+labs(color = "Type") +
+scale_fill_discrete(name = "Unemployment Type")
+unemploy %>%
+group_by(Demand_occupation, `District Name`) %>%
+count() -> U
+U
+unemploy %>%
+group_by(Demand_occupation, `District Name`) %>%
+count() ->
+U
+U
+unemploy %>%
+group_by(Demand_occupation, `District Name`) %>%
+count() ->
+UD
+UD
+unemploy %>%
+group_by(Demand_occupation, `District Name`) %>%
+count()
+unemploy %>%
+group_by(`District Name`, Demand_occupation) %>%
+count()
+unemploy %>%
+group_by(`District Name`, Demand_occupation) %>%
+count(sort = TRUE)
+unemploy %>%
+group_by(`District Name`, Demand_occupation) %>%
+count(sort = TRUE)
+unemploy %>%
+group_by(`District Name`, Demand_occupation) %>%
+count(sort = TRUE) -> UD
+UD
+unemploy %>%
+group_by(`District Name`, Demand_occupation) %>%
+count(sort = TRUE) %>%
+filter(Demand_occupation == "Registered unemployed")
+unemploy %>%
+group_by(`District Name`, Demand_occupation) %>%
+count(sort = TRUE)
+unemploy %>%
+group_by(`District Name`, Demand_occupation) %>%
+count(sort = TRUE) %>%
+filter(Demand_occupation == "Unemployment demand")
+unemploy %>%
+group_by(`District Name`, Demand_occupation) %>%
+count(sort = TRUE) %>%
+filter(Demand_occupation == "Unemployment demand")
+str(accidents)
+unique(accidents$`District Name`)
+names(accidents)
+accidents%>%
+group_by(Part.of.the.day, DistrictName)%>%
+filter(DistrictName!="Unknown") %>%
+count()
+names(accidents)
+accidents%>%
+group_by(`Part of the day`, DistrictName)%>%
+filter(DistrictName!="Unknown") %>%
+count()
+accidents%>%
+group_by(`Part of the day`, `District Name`)%>%
+filter(DistrictName!="Unknown") %>%
+count()
+accidents%>%
+group_by(`Part of the day`, `District Name`)%>%
+filter(District Name!="Unknown") %>%
+accidents%>%
+group_by(`Part of the day`, `District Name`)%>%
+filter('District Name!'="Unknown") %>%
+count()
+accidents%>%
+group_by(`Part of the day`, `District Name`)%>%
+filter('District Name'!="Unknown") %>%
+count()
+accidents%>%
+group_by(`Part of the day`, `District Name`)%>%
+filter('District Name'!="Unknown") %>%
+count(sort = TRUE)
+accidents%>%
+group_by(`Part of the day`, `District Name`)%>%
+filter('District Name'!="Unknown") %>%
+count(sort = TRUE) %>%
+rename(Number of Accidents = n)
+accidents%>%
+group_by(`Part of the day`, `District Name`)%>%
+filter('District Name'!="Unknown") %>%
+count(sort = TRUE) %>%
+rename(Number_of_Accidents = n)
+accidents%>%
+group_by(`District Name`)%>%
+filter('District Name'!="Unknown") %>%
+count(sort = TRUE) %>%
+rename(Number_of_Accidents = n)
+accidents%>%
+group_by(`District Name`)%>%
+filter(District Name!="Unknown") %>%
+accidents%>%
+group_by(`District Name`)%>%
+filter(District Name != "Unknown") %>%
+accidents%>%
+group_by(`District Name`)%>%
+filter('District Name' != "Unknown")
+accidents%>%
+group_by(`District Name`)%>%
+subset('District Name' != "Unknown") %>%
+count(sort = TRUE) %>%
+rename(Number_of_Accidents = n)
+accidents%>%
+group_by(`District Name`)%>%
+count(sort = TRUE) %>%
+rename(Number_of_Accidents = n)
+accidents%>%
+group_by(`District Name`)%>%
+count(sort = TRUE) %>%
+rename(Number_of_Accidents = n) %>%
+filter('District Name' != "Unknown")
+filter(accidents, accidents$`District Name` != "Unknmown")
+subset(accidents, accidents$`District Name` != "Unknmown")
+accidents[accidents$`District Name` == "Unknown",]
+accidents[!accidents$`District Name` == "Unknown",]
+accidents%>%
+group_by(`District Name`)%>%
+count(sort = TRUE) %>%
+rename(Number_of_Accidents = n) %>%
+accidents[!accidents$`District Name` == "Unknown",]
+accidents%>%
+group_by(`District Name`)%>%
+count(sort = TRUE) %>%
+rename(Number_of_Accidents = n) ->
+NewA
+NewA[!NewA$`District Name` == "Unknown",]
+unemploy %>%
+group_by(`District Name`, Demand_occupation) %>%
+count(sort = TRUE) %>%
+filter(Demand_occupation == "Registered unemployed")
+unemploy %>%
+group_by(`District Name`, Demand_occupation) %>%
+count(sort = TRUE) %>%
+filter(Demand_occupation == "Registered unemployed") ->
+NewReg
+Total <- merge(NewReg, NewA, by = "District Names" )
+NewReg
+NewA
+NewReg <- NewReg[!NewReg$`District Name` == "no costa",]
+Total <- merge(NewReg, NewAccidents, by = "District Names" )
+NewAccidents <- NewA[!NewA$`District Name` == "Unknown",]
+Total <- merge(NewReg, NewAccidents, by = "District Names" )
+NewReg
+NewReg <- NewReg[!NewReg$`District Name` == "No consta",]
+NewReg
+NewAccidents
+Total <- merge(NewReg, NewAccidents, by = "District Names" )
+Total <- rbind(NewReg, NewAccidents)
+Total
+NewReg[, !NewReg$Demand_occupation]
+NewReg
+NewReg[, c("District Name", "n")]
+NewReg <- NewReg[, c("District Name", "n")]
+Total <- rbind(NewReg, NewAccidents)
+Total
+NewReg
+NewAccidents
+Total <- rbind(NewReg, NewAccidents)
+Total
+Total <- merge(NewReg, NewAccidents, by = "District Name")
+Total
+unemploy %>%
+group_by(`District Name`, Demand_occupation) %>%
+count(sort = TRUE) %>%
+ggplot(mapping = aes(x = `District Name`, y = n, fill = Demand_occupation)) +
+geom_col() +
+ggtitle("Unemployment w.r.t. Districts")
+unemploy %>%
+group_by(`District Name`, Demand_occupation) %>%
+count(sort = TRUE) %>%
+ggplot(mapping = aes(x = `District Name`, y = n, fill = Demand_occupation)) +
+geom_col() +
+ggtitle("Unemployment w.r.t. Districts")
+unemploy %>%
+group_by(`District Name`, Demand_occupation) %>%
+count(sort = TRUE) %>%
+ggplot(mapping = aes(x = `District Name`, y = n, fill = Demand_occupation)) +
+geom_col() +
+ggtitle("Unemployment w.r.t. Districts") +
+xlab("District Name") +
+ylab("NumberOf") +
+theme_bw() +
+scale_fill_discrete(name = "Unemployment Type")
+Total %>%
+ggplot(mapping = aes(x = `District Name`, y = Number_of_Accidents)) +
+geom_col()
+Total %>%
+ggplot(mapping = aes(x = `District Name`, y = Number_of_Accidents, color = n)) +
+geom_col()
+Total %>%
+ggplot(mapping = aes(x = `District Name`, y = Number_of_Accidents, fill = n)) +
+geom_col()
+Total %>%
+ggplot(mapping = aes(x = `District Name`, y = Number_of_Accidents, fill = n)) +
+geom_col() +
+xlab("District Name") +
+ylab("Number of Accidents") +
+ggtitle("Number of Accidents fordistrict names filled by unemployment") +
+scale_fill_discrete(color = "Unemployment Number")
+Total %>%
+ggplot(mapping = aes(x = `District Name`, y = Number_of_Accidents, fill = n)) +
+geom_col() +
+xlab("District Name") +
+ylab("Number of Accidents") +
+ggtitle("Number of Accidents fordistrict names filled by unemployment") +
+scale_fill_discrete(name = "Unemployment Number")
+Total %>%
+ggplot(mapping = aes(x = `District Name`, y = Number_of_Accidents, fill = n)) +
+geom_col() +
+xlab("District Name") +
+ylab("Number of Accidents") +
+ggtitle("Number of Accidents fordistrict names filled by unemployment")
+Total %>%
+ggplot(mapping = aes(x = `District Name`, y = Number_of_Accidents, fill = n)) +
+geom_col() +
+xlab("District Name") +
+ylab("Number of Accidents") +
+ggtitle("Number of Accidents fordistrict names filled by unemployment") +
+scale_fill_discrete(name = "Unemployment Number")
+NewReg
+unemploy %>%
+group_by(`District Name`, Demand_occupation) %>%
+count(sort = TRUE) %>%
+filter(Demand_occupation == "Registered unemployed") %>%
+rename(Number_of_Registered_Unemployed = n)->
+NewReg
+NewReg
+NewReg <- NewReg[, c("District Name", "n")]
+NewReg <- NewReg[, c("District Name", "Number_of_Registered_Unemployed")]
+NewReg <- NewReg[!NewReg$`District Name` == "No consta",]
+NewReg
+NewAccidents
+Total <- merge(NewReg, NewAccidents, by = "District Name")
+Total %>%
+ggplot(mapping = aes(x = `District Name`, y = Number_of_Accidents, fill = n)) +
+geom_col() +
+xlab("District Name") +
+ylab("Number of Accidents") +
+ggtitle("Number of Accidents fordistrict names filled by unemployment")
+Total %>%
+ggplot(mapping = aes(x = `District Name`, y = Number_of_Accidents, fill = Number_of_Registered_Unemployed)) +
+geom_col() +
+xlab("District Name") +
+ylab("Number of Accidents") +
+ggtitle("Number of Accidents fordistrict names filled by unemployment")
+Total %>%
+ggplot(mapping = aes(x = Number_of_Registered_Unemployed, y = Number_of_Accidents, color = `District Name` )) +
+geom_point() +
+xlab("District Name") +
+ylab("Number of Accidents") +
+ggtitle("Number of Accidents fordistrict names filled by unemployment")
+Total %>%
+ggplot(mapping = aes(x = Number_of_Registered_Unemployed, y = Number_of_Accidents, color = `District Name` )) +
+geom_point() +
+xlab("Number of Registered Unemployed") +
+ylab("Number of Accidents") +
+ggtitle("Number of Accidents fordistrict names filled by unemployment")
+unemploy %>%
+group_by(`District Name`, Demand_occupation) %>%
+count(sort = TRUE) %>%
+filter(Demand_occupation == "Unemployment demand") %>%
+rename(Number_of_Unemployment_Demand = n)->
+NewDemand
+NewDemand
+NewDemand <- NewDemand[!NewDemand$`District Name` == "No consta",]
+NewDemand
+Total1 <- merge(NewDemand, NewAccidents, by = "District Name")
+Total1 %>%
+ggplot(mapping = aes(x = `District Name`, y = Number_of_Accidents, fill = Number_of_Unemployment_Demand)) +
+geom_col() +
+xlab("District Name") +
+ylab("Number of Accidents") +
+ggtitle("Number of Accidents fordistrict names filled by unemployment")
+Total1 %>%
+ggplot(mapping = aes(x = Number_of_Unemployment_Demand, y = Number_of_Accidents, color = `District Name` )) +
+geom_point() +
+xlab("Number of Unemployed Demanded") +
+ylab("Number of Accidents") +
+ggtitle("Number of Accidents fordistrict names filled by unemployment Demanded")
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(ggplot2)
+unemploy <- read_csv("..//Data//unemployment.csv")
+str(unemploy)
+accidents <- read_csv("..//Data//accidents_2017.csv")
+str(accidents)
+##Bar Graph for Unemployment statistics in 2017
+unemploy %>%
+filter(Year == "2017")%>%
+arrange(`District Name`) %>%
+group_by(`District Name`, Demand_occupation) %>%
+summarize( Number_Unemployed = sum(Number)) %>%
+ggplot(mapping = aes(x = `District Name`, y = Number_Unemployed, fill = Demand_occupation)) +
+geom_col() +
+ggtitle("Unemployment w.r.t. Districts") +
+xlab("District Name") +
+ylab("Number Of Unemployed people") +
+theme_bw() +
+scale_fill_discrete(name = "Unemployment Type") +
+theme(axis.text.x = element_text(size = 10, angle = 45, hjust = 1))
+##Getting total number of unemployed people by District name
+unemploy %>%
+select(`District Name`, Year, Number, Demand_occupation) %>%
+filter(Year == 2017) %>%
+arrange(`District Name`) %>%
+group_by(`District Name`) %>%
+summarize( Number_Unemployed = sum(Number)) ->
+Unemployed
+Unemployed
+##Getting number of accidents by District Name
+accidents%>%
+group_by(`District Name`)%>%
+count(sort = TRUE) %>%
+rename(Number_of_Accidents = n) ->
+NewA
+NewA
+##Removing unknown rows from Accidents and Unemployment
+NewAccidents <- NewA[!NewA$`District Name` == "Unknown",]
+Unemployed <- Unemployed[!Unemployed$`District Name` == "No consta",]
+##Merging the two dataframes
+Total <- merge(Unemployed, NewAccidents, by = "District Name")
+Total
+##Final ScatterPlot
+Total %>%
+ggplot(mapping = aes(x = Number_Unemployed, y = Number_of_Accidents, color = `District Name`)) +
+geom_point(size = 3) +
+xlab("Number of Unemployed") +
+ylab("Number of Accidents") +
+ggtitle("Number of Accidents for district names filled by unemployment") +
+theme_bw() +
+scale_color_manual(values = c("red", "blue", "green", "sky blue", "black", "grey", "brown", "gold", "dark green", "pink" ))

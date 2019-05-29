@@ -1,0 +1,343 @@
+---
+title: "Final Report on Barcelona"
+author: "Karan Dassi"
+date: "5/28/2019"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = F, warning = F, message = F)
+```
+
+
+```{r cars, echo = FALSE}
+suppressPackageStartupMessages(library(tidyverse))
+suppressPackageStartupMessages(library(ggplot2))
+suppressPackageStartupMessages(library(viridis))
+suppressPackageStartupMessages(library(ggthemes))
+unemploy <- read_csv("Data//unemployment.csv")
+accidents1 <- read_csv("Data//accidents_2017.csv")
+accidents <- read_csv("Data//accidents_al.csv")
+population <- read_csv("Data//population_al.csv")
+immigration_nationality = read.csv("Data//nationality.csv")
+immigration_age = read.csv("Data//age.csv")
+immigration_sex = read.csv("Data//sex.csv")
+
+```
+
+## Introduction  
+This study plans to give a 360-degree and in depth exploration of the city of Barcelona, by dissecting information along the following interrelated 4 dimensions: Population, transportation, accidentality, migration and employment.  
+To explore and gain the most insight from our data, we have based our exploration in the results of a few studies that help us have better understanding about the city of Barcelona. The City Report: Barcelona from Wilco explains the transaction of the city’s labor market, demographic change and immigration trend. The articles from “Determinants of urban sprawl in European cities” and “Measuring Negative Synergies of Urban Sprawl and Economic Crisis over Public Transport Efficiency: The Case of Spain” includes the city’s urban planning strategy and reviews.  
+The first section will look at the raw accident data, the second will study immigration and the final part will cover unemployment. Each section will contain the conclusions pertaining to it’s subject matter. As an appendix, we are submitting a geographic representation of the most relevant findings, which we believe helps put a very important perspective in the data.  
+
+## Few Dataset Description  
+```{r}
+
+str(accidents)
+str(population)
+str(unemploy)
+
+```
+
+The accidents data set contains the accidents recorded by police office in the city of Barcelona in 2017. There are total 10,312 observations in the accidents data set with 13 variables - District Name, Neighborhood Name, Weekday, Month, Day, Hour, Part of the day, Mild Injuries, Serious Injuries, Victims, Vehicles Involved, Longitude and Latitude.  
+The population data set contains the total 2017 population of Barcelona. There are total 14,016 observations in the population data set with 6 variables - Year, District.Name, Neighborhood.Name, Gender, Age, and Number. 
+The unemployment dataset contains the employment records for the people in Barcelona in the year 2017, there is a total of 14,208 observations for 9 variables.  
+
+## Barcelona accident analysis in 2017  
+
+### Hypothesis 1 in accidents:  
+**Accidents would be spread evenly in the entire city as most areas in Barcelona are accessible for both car and walkers.**  
+
+```{r}
+
+accidents%>%
+  group_by(DISTRICT.NAME)%>%
+  summarise(total_vic = sum(VICTIMS, na.rm = T))%>%
+  mutate(vic_rate = round(100 * total_vic/ sum(total_vic),2))%>%
+  arrange(desc(total_vic)) -> accidents_vic
+
+
+population%>%
+  group_by(DISTRICT.NAME)%>%
+  summarise(total_pop = sum(NUMBER_P, na.rm = T)) -> dis_pop
+
+
+left_join(accidents_vic, dis_pop, by = "DISTRICT.NAME")%>%
+  arrange(desc(vic_rate)) -> dis_vic_pop
+
+dis_vic_pop
+
+dis_vic_pop%>%
+  mutate(DISTRICT.NAME = fct_reorder(DISTRICT.NAME, vic_rate))%>%
+  ggplot(aes(x = DISTRICT.NAME, y = vic_rate, size = total_pop)) +
+  geom_point(color = "blue") +
+  theme_bw() +
+  coord_flip() +
+  ggtitle("Accident Rate vs Districts") +
+  xlab("Districts") +
+  ylab("Accident Rate by %") +
+  labs(fill = "Total Population")
+    
+```
+**Analysis and finding:**  
+Our initial research shows that Barcelona is relatively small city with 39.34 mi? which is 0.58 times as big as Washington D.C; therefore, our assumption is that the accidents would be spread evenly in the entire city as most areas in Barcelona are accessible for both car and walkers. However, our result indicates that most accidents were actually clustering in the district Eixample and then Sant Marti, Sants Montjuic and Sarria-Sant Gervasi with 29.33%, 13.54%, 10.94% and 10.62% accident rate. We have also incorporated population data set in our analysis and it shows that the higher the accident rate is, the higher the population is within the district.  
+As the result is not supporting our assumption, we dived into more and created a accident count heat map. Based on the heat map (in Appendix 1), we noticed that accidents were spread out from the middle the city which is Eixample to the north, south and west sides of the city where Sant Marti, Sants Montjuic and Sarria-Sant Gervasi locate in respective order. According to Google map attraction locator, most restaurants, bars and hotels in Barcelona are in Exiample and the attractions are spread from Eixample toward Sant Marti, Sants Montjuic and Sarria-Sant Gervasi. Therefore, it supports our first result that most accidents happened in these 4 districts, but our assumption is not correct. The accidents did not spread evenly in the city.  
+
+### Hypothesis 2 in accidents:  
+**Serious injury is associated with accidents when vehicle(s) involved.**  
+```{r}
+
+accidents%>%
+  group_by(DISTRICT.NAME)%>%
+  summarise(sum_veh = sum(VEHICLES.INVOLVED),
+            sum_mid = sum(MILD.INJURIES),
+            sum_ser = sum(SERIOUS.INJURIES))%>%
+  mutate(mid_rate = round(100 * sum_mid/ sum(sum_mid), 2),
+         ser_rate = round(100 * sum_ser/ sum(sum_ser), 2),
+         veh_rate = round(100 * sum_veh/ sum(sum_veh), 2))%>%
+  select(DISTRICT.NAME, mid_rate, ser_rate,veh_rate)%>%
+  arrange(desc(veh_rate))
+
+accidents%>%
+  group_by(DISTRICT.NAME)%>%
+  summarise(sum_veh = sum(VEHICLES.INVOLVED),
+            sum_mid = sum(MILD.INJURIES),
+            sum_ser = sum(SERIOUS.INJURIES))%>%
+  mutate(mid_rate = round(100 * sum_mid/ sum(sum_mid), 2),
+         ser_rate = round(100 * sum_ser/ sum(sum_ser), 2),
+         veh_rate = round(100 * sum_veh/ sum(sum_veh), 2))%>%
+  ggplot(aes(x = DISTRICT.NAME, y = veh_rate, color = mid_rate, size = ser_rate)) +
+  geom_point() +
+  scale_colour_gradient(low = "Purple", high = "orange") +
+  coord_flip() +
+  theme_bw() +
+  ggtitle("Vehicle Involved vs Injury Level by District") +
+  xlab("Districts") +
+  ylab("Vehicle Involved by %") +
+  labs(color = "Mild Injury by %", size = "Serious Injury by %")
+
+  
+
+```
+
+**Analysis and finding:**  
+In the second analysis, our assumption is that serious injury is associated with accidents when vehicle(s) involved. According to our result, the serious injury rate increases when the vehicle involved rate increases as well in the most districts except Eixample. Since most accidents clustered in Eixample as we mention before, it is reasonable that Eixapmle had high vehicle involved rate with both high serious and mild injury rates as well. Therefore, our result supports our assumption that when the accident involved with vehicle(s), it tended to lead to serious injury to the victim(s).  
+
+
+
+### Hypothesis 3 for accidents:  
+**If time has an assosiation with accident rates.**  
+```{r}
+
+monthvec <- c("December", "November", "October", "September", "August", "July", "June", "May", "April", "March", "February", "January")
+
+accidents%>%
+  mutate(month_fc = parse_factor(MONTH, levels = monthvec))%>%
+  group_by(month_fc, PART.OF.THE.DAY)%>%
+  summarise(total_vic = sum(VICTIMS))%>%
+  ggplot(aes(x = month_fc, y = total_vic, fill = PART.OF.THE.DAY)) +
+  geom_col() +
+  coord_flip() +
+  ggtitle("Accident count vs Month") +
+  xlab("Accidents") +
+  ylab("Month") +
+  labs(fill = "Part of the Day")
+
+
+```
+
+**Analysis and finding:**  
+Aside from the analysis with geographical factor, we would also like to know if month and time during the year of 2017 have association with accidents. Our assumptions are most of the accidents would happen at night and there would be higher accident count between May and September than the rest of the month as it is the high season for tourists visiting the city. It appears that our assumptions are not completely supported by our result as most accidents happened during afternoon and the accidents were counted evenly in each month except the month of August.  
+We conducted more on secondary research to have a better understanding of the accident pattern and we noticed that our assumptions are not accurate mainly because of the cultural factor. In Spain, people tend to have Siesta time which is in the afternoon between 2 - 4pm. During Siesta, shops are closed and workers would either eat in the restaurants or go home and this can lead to higher chances of accidents happen. Additionally, while May - September attracts tourists, August is the vacation month for people in Barcelona. With many locals travel to other cities and countries, it is reasonable to have low accident counts during August. While our assumptions are not accurate, our result is matching to our secondary resources.  
+
+## Immigration Pattern: 
+
+In this part, we’re looking at the data sets for the immigration to Barcelona. We will be looking at the data sets nationality, age group and sex from the Barcelona data. We will try to analyze graphically to see if there is a pattern between the immigration to Barcelona between these variables.  
+
+### Hypothesis 1 for immigration:   
+**There will be a lot of Spanish-speaking countries that have immigrants to Spain, considering they speak the same language.**    
+```{r}
+immigration_nationality %>%
+  filter(Year == 2017) %>%
+  select(Year, District.Name, Nationality, Number) %>%
+  group_by(Nationality) %>%
+  summarise(TotalNumber = sum(Number)) %>% 
+  arrange(desc(TotalNumber)) %>%
+  filter(Nationality != "Spain") %>%
+  filter(TotalNumber > 1000) ->tidy_immigration_nationality
+
+
+ggplot(tidy_immigration_nationality, aes(x =Nationality, y = TotalNumber, fill = Nationality)) + 
+  geom_bar(stat = "identity") + 
+  xlab("District Numbers") + 
+  ylab("Immigrant Number") + 
+  coord_flip()
+
+
+```
+
+**Analysis and finding:**  
+We can see from our data, Italy actually has the largest immigrants, then Venezuela, Peru, Pakistan, Colombia, China, all have significant immigrants numbers. So our assumption was partially true, Spanish-speaking countries do make up a significant part of the immigration. However, European immigrants, Asian immigrants also comprise a significant portion.  
+
+
+### Hypothesis 2 for immigration: 
+**The younger age groups would make up the majority of the immigrants.**  
+```{r}
+
+ggplot(immigration_age, aes(x = Age, y = Immigrants, color = Age, fill = Age)) + 
+  geom_boxplot() + 
+  facet_wrap(~ District.Name) + 
+  xlab("District Names") + 
+  ylab("Immigrant Number") +
+  coord_flip()
+
+
+```
+
+**Analysis and finding:**  
+We can see from the box plot that Ciutat Vella, Exiample, Gracia and Sants-Montjuic attract the most immigrants. We can see the green plots, namely the ones representing age group from 25-50 are thicker and have a wider distribution. As the plots turn bluer and redder, the plots are sparser and thinner. From the box plot, we can see that age group 25-50 indeed have the largest immigrant numbers and they have a wider variance of distribution between each district. So our hypotheses were close.  
+
+
+### Hypothesis 3 for immigration: 
+**Males would make up a much larger portion of immigrants than females.**  
+```{r}
+
+immigration_sex %>%
+  mutate(District.Name = iconv(District.Name, "latin1", "UTF-8")) ->
+  immigration_sex_2
+
+ggplot(immigration_sex_2, aes(x = Gender, y = Immigrants, color = Gender, fill = Gender)) + 
+  geom_boxplot() + 
+  facet_wrap(~ District.Name) + 
+  xlab("District Names") + 
+  ylab("Immigrant Number") + 
+  coord_flip()
+
+
+```
+**Analysis and finding:**  
+We can see from the plots that, the immigrant numbers between males are similar. Although to our contrary, the female immigrants are not that much different from male immigrants, even surpassing them in some districts. Also, the female immigrants have a wider distribution, namely a bigger variance in a lot of districts. Again, the districts that attract the most immigrants are Ciutat Vella, Eixample, Grecia and Les Corts.  
+
+## Unemployment Analysis:  
+The unemployment data set consists of 14,208 records and a total of 9 variables - Year, Month, District Code, District Name, Neighborhood Code, Neighborhood Name, Gender, Occupation (Referring to type of unemployment), and Number.  
+Out of all the records we are only concerned about the year 2017 and thus for all the following visualizations, we have used data for unemployment from the year 2017.  
+
+### Hypothesis 1 for Unemployment: 
+**There will be higher unemployed males in Barcelona than Females.**  
+```{r}
+
+gen <- c("Male" = "red",
+         "Female" = "blue")
+
+unemploy %>%
+  select(`District Name`,Gender, Year, Number, Demand_occupation) %>%
+  filter(Year == 2017 & `District Name` != "No consta") %>%
+  arrange(`Gender`) %>%
+  group_by(`Gender`) %>%
+  summarise( Unemployed = sum(Number)) %>% 
+  ggplot(mapping = aes(x = `Gender`, y = Unemployed, fill = Gender)) +
+  geom_col() +
+  ggtitle("Unemployment w.r.t. Gender") +
+  xlab("Gender") +
+  ylab("Number Of Unemployed people") +
+  theme_bw() +
+  scale_fill_manual(
+    values = gen,
+    limits = names(gen)) +
+  theme(axis.text.x = element_text(size = 10, angle = 45, hjust = 1))
+
+unemploy %>%
+  select(`District Name`,Gender, Year, Number, Demand_occupation) %>%
+  filter(Year == 2017 & `District Name` != "No consta") %>%
+  arrange(`Gender`, `District Name`) %>%
+  group_by(`Gender`, `District Name`) %>%
+  summarise( Unemployed = sum(Number)) %>%
+  ggplot(mapping = aes(x = `District Name`, y = Unemployed, fill = Gender)) +
+  geom_col() +
+  ggtitle("Unemployment w.r.t. Districts filled by Gender") +
+  xlab("District Name") +
+  ylab("Number Of Unemployed people") +
+  theme_bw() +
+ # scale_fill_discrete(name = "Gender") +
+    scale_fill_manual(
+    values = gen,
+    limits = names(gen)) +
+  theme(axis.text.x = element_text(size = 10, angle = 45, hjust = 1))
+
+
+```
+
+**Analysis and finding:**  
+To our surprise, there is almost an even distribution of male and female unemployed people in districts of barcelona and a higher number of unemployed females than males as a whole, which breaks our assumption.  
+
+### Hypothesis 2 for unemployment:  
+**Unemployment will be assosiated with the number of accidents in various districts.**  
+```{r}
+
+unemploy %>%
+  select(`District Name`, Year, Number, Demand_occupation) %>%
+  filter(Year == 2017) %>%
+  arrange(`District Name`) %>%
+  group_by(`District Name`) %>%
+  summarise( Number_Unemployed = sum(Number)) ->
+  Unemployed
+
+
+##Getting number of accidents by District Name
+accidents1%>%
+group_by(`District Name`)%>%
+count(sort = TRUE) %>%
+  rename(Number_of_Accidents = n) ->
+  NewA
+
+##Removing unknown rows from Accidents and Unemployment
+NewAccidents <- NewA[!NewA$`District Name` == "Unknown",]
+
+Unemployed <- Unemployed[!Unemployed$`District Name` == "No consta",]
+
+##Merging the two dataframes
+Total <- merge(Unemployed, NewAccidents, by = "District Name")
+
+##Final ScatterPlot
+Total %>%
+  ggplot(mapping = aes(x = Number_Unemployed, y = Number_of_Accidents, color = `District Name`)) +
+  geom_point(size = 5) +
+  xlab("Number of Unemployed") +
+  ylab("Number of Accidents") +
+  ggtitle("Number of Accidents for district names filled by unemployment") + 
+  theme_bw() + 
+  scale_color_manual(values = c("red", "blue", "green", "sky blue", "black", "grey", "brown", "gold", "dark green", "pink" ))
+
+
+```
+
+**Analysis and finding:**  
+The top two cities with most number of accidents i.e. Eixample and Sant Marti also have the maximum number of unemployed people but Nou Barris (which means new neighborhoods in Spanish) also has the third highest number of unemployed people but has very few accidents whic is due to the fact that Nou Barris transformed from a sub-urban area to an urban area recently and not being a metropolitan city was the most affected by economic crisis a few years back and could not recover fast from that and hence the explanation. It also does not have a lot of vehicles being a newly urban area.  
+Eixample and Sant Marti are top most populated districts in Barcelona and also have very high unemployment rates.  
+We can quite confidently say that unemployment has an assosiation with the number of accidents. In other words, higher unemployment rates does affect accident rates in Barcelona.  
+
+## References:  
+
+https://www.barcelona.de/en/barcelona-figueres.html  
+
+https://mapfight.appspot.com/manhattan-vs-barcelona/manhattan-barcelona-spain-size-comparison  
+
+https://santorinidave.com/best-time-to-visit-barcelona  
+
+https://www.tripsavvy.com/why-do-you-sleep-during-siesta-1644327  
+
+https://www.nytimes.com/2017/07/28/business/spain-europe-economy-recovery-unemployment.html  
+
+https://www.theepochtimes.com/spain-recovering-from-financial-crisis-but-fears-a-new-recession_2725471.html  
+
+Ouesteali,Walid and others. “Determinants of urban sprawl in European cities.” Urban Studies Journa (July, 2015)    
+
+Evans, Leonard. “Traffic Fatality Reduction: United States Compated With 25 Other Countries.” American Journal of Public Health (Auguest 2014)  
+
+Alonso, Andres and others. “Measuring Negative Synergies of Urban Spraw and Economic Crisis over Public Transport Efficiency: The Case Of Spain” International Regional Sceience Review (January, 2017)  
+
+Teresa Hontagut. “City Report: Barcelona” Wilco  
+
+
+
+
